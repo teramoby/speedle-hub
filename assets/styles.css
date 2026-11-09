@@ -474,13 +474,10 @@ h1 {
   .wrap { width: calc(100% - 28px); }
   h1 { font-size: 3.25rem; }
   .section { padding: 76px 0; }
-  .site-footer { margin-top: 76px; }
   .site-footer .footer-main, .site-footer .footer-bar { width: min(100% - 28px, 1160px); }
   .status-inner { min-height: 0; flex-direction: column; align-items: flex-start; gap: 9px; padding: 18px 0; }
 }
 @media (max-width: 560px) {
-  .section { padding: 68px 0; }
-  .hero-grid { padding: 58px 0 62px; }
   .card-top { flex-direction: column; align-items: flex-start; }
   .family-card { padding: 24px 20px; }
   .product-card, .connect-card { padding: 26px 22px; }
