@@ -71,8 +71,8 @@ requests with `permissions: contents: read`.
 
 ## Launch checklist
 
-From the hub draft (§3.5). This repository is only the static site; DNS,
-Cloudflare and GitHub Pages settings are changed separately.
+This repository is only the static site; DNS, Cloudflare and GitHub Pages
+settings are changed separately.
 
 1. Change `CNAME` to `speedle.io`, add the existing `BingSiteAuth.xml`
    verification file at the repository root, and keep `.nojekyll`.
