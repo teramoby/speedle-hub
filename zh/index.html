@@ -306,7 +306,8 @@
       <div class="connect-grid">
         <article class="connect-card">
           <h3>六种语言的 SDK</h3>
-          <p>六种 SDK 都调用 <code>POST /authz-check/v1/is-allowed</code>。Python、Java、Go、C#/.NET 和 Rust 已发布 0.2.0；Node.js 包尚未发布。六种 SDK 均支持自托管 Speedle；Speedle Cloud 支持即将推出。</p>
+          <p>六种 SDK 都调用 <code>POST /authz-check/v1/is-allowed</code>。Python、Java、Go、C#/.NET 和 Rust 已发布 0.2.0，Node.js 包 <code>@speedle/sdk</code> 也已发布到 npm。六种 SDK 均支持自托管 Speedle；Speedle Cloud 支持即将推出。</p>
+          <pre class="install"><code>npm install @speedle/sdk</code></pre>
           <ul class="chips">
             <li><a class="chip" href="https://engine.speedle.io/zh/docs/sdks/java/">Java</a></li>
             <li><a class="chip" href="https://engine.speedle.io/zh/docs/sdks/python/">Python</a></li>
@@ -323,7 +324,9 @@
 
         <article class="connect-card connect-dark">
           <h3>Speedle MCP</h3>
-          <p>本地 stdio MCP 服务器，处于发布预览阶段，提供两种相互独立的模式：<code>check</code> 负责授权检查，<code>manage</code> 负责策略管理。目前尚未发布到 npm。</p>
+          <p>本地 stdio MCP 服务器，处于发布预览阶段，提供两种相互独立的模式：<code>check</code> 负责授权检查，<code>manage</code> 负责策略管理。<code>@speedle/mcp</code> 已发布到 npm，命令名是 <code>speedle-mcp</code>，也可以用 npx 直接运行。</p>
+          <pre class="install"><code>npm install @speedle/mcp
+npx @speedle/mcp check</code></pre>
           <div class="connect-links">
             <a href="https://github.com/teramoby/speedle-mcp">MCP 仓库</a>
             <a href="https://ai.speedle.io/zh/#mcp">MCP 概览</a>

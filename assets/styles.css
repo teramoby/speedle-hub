@@ -386,6 +386,18 @@ h1 {
 .connect-dark code { color: var(--header-accent); }
 .connect-dark .connect-links a { color: var(--header-accent); }
 .connect-dark a:focus-visible { outline-color: var(--header-accent); }
+.install {
+  margin: 0 0 18px; padding: 12px 14px; overflow: auto;
+  border: 1px solid var(--line); border-radius: var(--radius-control);
+  background: var(--soft); color: var(--ink);
+  font: 500 .84rem/1.55 var(--mono);
+}
+.connect-card .install code { font: inherit; font-size: 1em; color: inherit; }
+.connect-dark .install {
+  border-color: rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .06);
+  color: #ece8f8;
+}
 
 /* Footer v16 */
 .site-footer {

@@ -306,7 +306,8 @@
       <div class="connect-grid">
         <article class="connect-card">
           <h3>SDKs for six languages</h3>
-          <p>All six call <code>POST /authz-check/v1/is-allowed</code>. Python, Java, Go, C#/.NET and Rust are published at 0.2.0; the Node.js package is not published yet. All six work with self-hosted Speedle; Speedle Cloud support is coming soon.</p>
+          <p>All six call <code>POST /authz-check/v1/is-allowed</code>. Python, Java, Go, C#/.NET and Rust are published at 0.2.0, and the Node.js package <code>@speedle/sdk</code> is published on npm. All six work with self-hosted Speedle; Speedle Cloud support is coming soon.</p>
+          <pre class="install"><code>npm install @speedle/sdk</code></pre>
           <ul class="chips">
             <li><a class="chip" href="https://engine.speedle.io/docs/sdks/java/">Java</a></li>
             <li><a class="chip" href="https://engine.speedle.io/docs/sdks/python/">Python</a></li>
@@ -323,7 +324,9 @@
 
         <article class="connect-card connect-dark">
           <h3>Speedle MCP</h3>
-          <p>A local stdio MCP server in launch preview, with two deliberately separate modes: <code>check</code> for authorization questions and <code>manage</code> for policy management. It is not yet published on npm.</p>
+          <p>A local stdio MCP server in launch preview, with two deliberately separate modes: <code>check</code> for authorization questions and <code>manage</code> for policy management. <code>@speedle/mcp</code> is published on npm. Its binary is <code>speedle-mcp</code>; run it directly with npx.</p>
+          <pre class="install"><code>npm install @speedle/mcp
+npx @speedle/mcp check</code></pre>
           <div class="connect-links">
             <a href="https://github.com/teramoby/speedle-mcp">MCP repository</a>
             <a href="https://ai.speedle.io/#mcp">MCP overview</a>
