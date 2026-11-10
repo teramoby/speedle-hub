@@ -22,12 +22,13 @@ const commentedCanonical = {
   'ko/index.html': 'https://speedle.io/ko/',
   'es/index.html': 'https://speedle.io/es/',
 };
+/* Visible language-selector order. Chinese is last. */
 const switcher = [
-  ['/', 'en'],
-  ['/zh/', 'zh-CN'],
-  ['/ja/', 'ja'],
-  ['/ko/', 'ko'],
-  ['/es/', 'es'],
+  ['/', 'en', 'English'],
+  ['/ja/', 'ja', '日本語'],
+  ['/ko/', 'ko', '한국어'],
+  ['/es/', 'es', 'Español'],
+  ['/zh/', 'zh-CN', '中文'],
 ];
 const results = [];
 
@@ -144,7 +145,39 @@ check('every page links to all five language homes', () => {
     }
   }
   assert(missing.length === 0, missing.join('; '));
-  return 'en, zh-CN, ja, ko, es';
+  return 'en, ja, ko, es, zh-CN';
+});
+function selectorRows(html, className) {
+  const block = html.match(new RegExp(`<div class="${className}"[\\s\\S]*?<\\/div>`));
+  if (!block) return null;
+  return [...block[0].matchAll(/<a\b([^>]*)>([^<]*)<\/a>/g)].map((match) => ({
+    href: (match[1].match(/\bhref=["']([^"']+)["']/) || [])[1],
+    label: match[2].trim(),
+  }));
+}
+check('language selectors list Chinese last', () => {
+  const expectedHrefs = switcher.map(([href]) => href);
+  const expectedLabels = switcher.map(([, , label]) => label);
+  const bad = [];
+  for (const page of languagePages) {
+    const rows = selectorRows(text(page), 'languages-panel');
+    if (!rows) {
+      bad.push(`${page}: languages panel missing`);
+      continue;
+    }
+    const hrefs = rows.map((row) => row.href);
+    const labels = rows.map((row) => row.label);
+    if (JSON.stringify(hrefs) !== JSON.stringify(expectedHrefs)) bad.push(`${page} hrefs: ${hrefs.join(' ')}`);
+    if (JSON.stringify(labels) !== JSON.stringify(expectedLabels)) bad.push(`${page} labels: ${labels.join(', ')}`);
+  }
+  const notFound = selectorRows(text('404.html'), 'actions');
+  if (!notFound) bad.push('404.html: actions missing');
+  else {
+    const hrefs = notFound.map((row) => row.href);
+    if (JSON.stringify(hrefs) !== JSON.stringify(expectedHrefs)) bad.push(`404.html hrefs: ${hrefs.join(' ')}`);
+  }
+  assert(bad.length === 0, bad.join('; '));
+  return 'English, 日本語, 한국어, Español, 中文';
 });
 check('language pages mark the current language and hreflang', () => {
   const missing = [];
