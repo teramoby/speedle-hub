@@ -69,6 +69,22 @@ checks that:
 The workflow in `.github/workflows/check.yml` runs the same script on pull
 requests with `permissions: contents: read`.
 
+## Pull request review
+
+ReviewBot reads a pull request diff and posts a static review. It does not run
+the site or `scripts/check.sh`. A collaborator with write access can request
+one from a pull request comment:
+
+```text
+@reviewbot review
+@reviewbot recheck
+@reviewbot explain why is this link on the Chinese page?
+```
+
+A bare `@reviewbot` means `review`. Commands also work on a code-line comment.
+`.github/REVIEWBOT.md` describes the flow. Reviews run only after those
+workflows are on the default branch.
+
 ## Launch checklist
 
 This repository is only the static site; DNS, Cloudflare and GitHub Pages
