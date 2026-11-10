@@ -10,9 +10,9 @@ This glossary defines standard translations for Japanese (ja), Korean (ko) and S
 
 ## General Rules
 
-1. **Untranslated items:** Product names (`Speedle`, `Speedle Engine`, `Speedle Cloud`, `Speedle AI`), policy language name (`SPDL`), CLI commands (`spctl`, `speedle-mcp`, `npm`, `npx`), code, API endpoints (`POST /authz-check/v1/is-allowed`, `IsAllowed`), package names (`@speedle/sdk`, `@speedle/mcp`), programming language names (`Go`, `Python`, `Java`, `C#/.NET`, `Rust`, `Node.js`), and protocol/standard names (`UPL 1.0`, `REST`, `gRPC`, `stdio`) stay in English across all languages.
+1. **Untranslated items:** Product names (`Speedle`, `Speedle Engine`, `Speedle Cloud`, `Speedle AI`), policy language name (`SPDL`), CLI commands (`spctl`, `speedle-mcp`, `npm`, `npx`), code, API endpoints (`POST /authz-check/v1/is-allowed`, `IsAllowed`), package names (`@speedle/sdk`, `@speedle/mcp`), programming language names (`Go`, `Python`, `Java`, `C#/.NET`, `Rust`, `Node.js`), and protocol/standard names (`UPL 1.0`, `REST`, `gRPC`, `stdio`) stay in English across all languages. Code samples, including comments inside them, are copied unchanged.
 2. **Punctuation in titles and UI labels:** Titles, headings, hero titles, card titles, eyebrow labels, button labels, and navigation labels must not end with a full stop (`.` or `。`) in any language. Body sentences and meta descriptions retain standard punctuation.
-3. **Cross-site links:** Links from a localized page to other Speedle sites point to the counterpart page in the same language if it exists; otherwise fallback to the English page.
+3. **Cross-site links:** Links from a localized page to other Speedle sites point to the counterpart page in the same language if it exists; otherwise they use the English page. Engine, Cloud and AI currently publish English and Chinese only, so Japanese, Korean and Spanish pages link to those sites in English.
 4. **Acronyms:** Standard security acronyms (`RBAC`, `ABAC`, `PMS`, `ADS`, `MCP`, `SDK`, `RAG`, `A2A`, `ZSP`) retain their Latin uppercase forms, optionally followed or preceded by the localized explanation on first mention.
 
 ---
@@ -30,7 +30,7 @@ This glossary defines standard translations for Japanese (ja), Korean (ko) and S
 | **spctl** | spctl | spctl | spctl | spctl | CLI binary name; keep in English |
 | **@speedle/sdk** | @speedle/sdk | @speedle/sdk | @speedle/sdk | @speedle/sdk | npm package name; keep in English |
 | **@speedle/mcp** | @speedle/mcp | @speedle/mcp | @speedle/mcp | @speedle/mcp | npm package name; keep in English |
-| **Universal Permissive License v1.0 (UPL 1.0)** | Universal Permissive License v1.0 (UPL 1.0) | Universal Permissive License v1.0 (UPL 1.0) | Universal Permissive License v1.0(UPL 1.0) | Universal Permissive License v1.0 (UPL 1.0) | License name; keep official English title |
+| **Universal Permissive License v1.0 (UPL 1.0)** | Universal Permissive License v1.0 (UPL 1.0) | Universal Permissive License v1.0 (UPL 1.0) | Universal Permissive License v1.0 (UPL 1.0) | Universal Permissive License v1.0 (UPL 1.0) | License name; keep official English title |
 
 ---
 
@@ -53,6 +53,11 @@ This glossary defines standard translations for Japanese (ja), Korean (ko) and S
 | **user** | 用户 | ユーザー | 사용자 | usuario | Subject in policy |
 | **service** | 服务 | サービス | 서비스 | servicio | Protected service / target domain |
 | **token** | 令牌 | トークン | 토큰 | token | API authentication token |
+| **console** | 控制台 | コンソール | 콘솔 | consola | Policy and service management UI |
+| **sign-in** | 登录 | ログイン | 로그인 | inicio de sesión | Account sign-in |
+| **demo** | 演示 | デモ | 데모 | demostración | Sample-data demonstration |
+| **request model** | 请求模型 | リクエストモデル | 요청 모델 | modelo de solicitud | Shared authorization request shape |
+| **decision semantics** | 决策语义 | 決定セマンティクス | 결정 체계 | semántica de decisión | Meaning of allow and deny |
 | **RBAC** | RBAC | RBAC | RBAC | RBAC | Role-Based Access Control |
 | **ABAC** | ABAC | ABAC | ABAC | ABAC | Attribute-Based Access Control |
 | **Playground** | Playground | プレイグラウンド | 플레이그라운드 | Playground | Interactive policy test environment |
@@ -76,6 +81,10 @@ This glossary defines standard translations for Japanese (ja), Korean (ko) and S
 | **agent-to-agent calls (A2A)** | 智能体间调用（A2A） | エージェント間呼び出し (A2A) | 에이전트 간 호출(A2A) | llamadas de agente a agente (A2A) | Inter-agent communication |
 | **zero standing privileges (ZSP)** | 零常驻权限（ZSP） | 常設特権ゼロ (ZSP) | 상시 권한 배제(ZSP) | privilegios permanentes cero (ZSP) | Just-in-time privilege model |
 | **solution patterns** | 解决方案模式 | ソリューションパターン | 솔루션 패턴 | patrones de solución | Architectural reference patterns |
+| **handbook** | 员工手册 | マニュアル | 지침서 | manual | Source document for policy modeling |
+| **regulation** | 法规 | 規程 | 규정 | normativa | Source document for policy modeling |
+| **data and training** | 数据与训练 | データとトレーニング | 데이터 및 학습 | datos y entrenamiento | AI pattern area |
+| **model release** | 模型发布 | モデルリリース | 모델 배포 | publicación de modelos | AI pattern area |
 
 ---
 
@@ -122,3 +131,4 @@ This glossary defines standard translations for Japanese (ja), Korean (ko) and S
 | **Page not found** | 页面不存在 | ページが見つかりません | 페이지를 찾을 수 없습니다 | Página no encontrada | 404 page title (no trailing dot) |
 | **English home** | 英文首页 | 英語ホーム | 영어 홈 | Inicio en inglés | 404 link button (no trailing dot) |
 | **All rights reserved** | 版权所有 | All rights reserved | All rights reserved | Todos los derechos reservados | Copyright footer statement |
+| **Community links** | 社区链接 | コミュニティリンク | 커뮤니티 링크 | Enlaces de la comunidad | Footer social navigation label |

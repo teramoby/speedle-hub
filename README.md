@@ -1,8 +1,8 @@
 # speedle-hub
 
-Static hub for the Speedle family: the planned front door for `speedle.io`. Two
-pages introduce Speedle Engine, Speedle Cloud and Speedle AI, explain the shared
-SPDL policy model, and link to the three product sites.
+Static hub for the Speedle family: the planned front door for `speedle.io`. Home
+pages in five languages introduce Speedle Engine, Speedle Cloud and Speedle AI,
+explain the shared SPDL policy model, and link to the three product sites.
 
 No build step: plain HTML, one stylesheet, one small script, inline SVG icons.
 
@@ -18,11 +18,11 @@ Preview safety:
 - `robots.txt` disallows every crawler.
 - No sitemap, no `llms.txt`, no analytics beacon and no OG image.
 - `canonical`, `hreflang`, `og:url` and JSON-LD are kept in a commented
-  `TODO(launch)` block on both language pages, so the preview does not claim
+  `TODO(launch)` block on every language page, so the preview does not claim
   the apex.
-- A visible header ribbon reads **Preview** / **预览**. It is shown by the
-  `is-preview` class on `<body>`; remove that one class from both pages to hide
-  it at launch.
+- A visible header ribbon reads **Preview**, **预览**, **プレビュー**, **프리뷰**
+  or **Vista previa**. It is shown by the `is-preview` class on `<body>`;
+  remove that one class from every language page to hide it at launch.
 
 `CNAME` is `preview.speedle.io`.
 
@@ -32,14 +32,21 @@ Preview safety:
 | --- | --- |
 | `/` | English hub |
 | `/zh/` | Chinese hub |
-| `/404.html` | Not-found page with links to both home pages |
+| `/ja/` | Japanese hub |
+| `/ko/` | Korean hub |
+| `/es/` | Spanish hub |
+| `/404.html` | Not-found page with links to every home page |
 | `assets/styles.css` | Shared stylesheet |
-| `assets/site.js` | Header menu and Products panel controller |
+| `assets/site.js` | Header menu, Products panel and language menu |
+| `i18n/glossary.md` | Shared Japanese, Korean and Spanish terminology |
 | `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Hub favicons |
 
-English and Chinese pages have the same sections, headings and links. On Chinese
+The five language pages have the same sections, headings and links. On Chinese
 pages, cross-site links keep the page language: Engine uses `/zh/`, Cloud uses
-`/zh-CN/` and AI uses `/zh/`.
+`/zh-CN/` and AI uses `/zh/`. Japanese, Korean and Spanish pages link to the
+English pages of those sites. Product names, code, CLI commands, API paths and
+SPDL stay in English. `i18n/glossary.md` is the shared terminology for the
+other Speedle sites.
 
 The header and footer follow the shared Speedle website standard, with the hub's
 own lock-up (sphere + Speedle wordmark, no product word) and the original orange
@@ -56,15 +63,18 @@ bash scripts/check.sh
 `scripts/check.sh` runs `scripts/check.mjs` with Node.js and no packages. It
 checks that:
 
-- both language pages and `404.html` exist;
+- every language page and `404.html` exist;
 - every page has the noindex meta, the preview ribbon and no analytics;
 - `robots.txt` disallows everything and `CNAME` is exactly
   `preview.speedle.io`;
 - canonical, hreflang and `og:url` are not active;
 - every internal link, asset reference and in-page anchor resolves;
 - every external link is `https`;
-- English and Chinese pages have the same sections, section order and heading
-  counts.
+- the five language pages have the same sections, section order, heading
+  counts and code samples;
+- each page links to all five language homes, and cross-site links use Chinese
+  URLs on the Chinese page and English URLs on the others;
+- titles, headings and navigation labels do not end with a full stop.
 
 The workflow in `.github/workflows/check.yml` runs the same script on pull
 requests with `permissions: contents: read`.
@@ -97,9 +107,9 @@ settings are changed separately.
    200.
 3. Add the ordered Cloudflare rules: Bing verification file → hub routes →
    Engine legacy paths 301 to `https://engine.speedle.io` with the same path →
-   fallback 301. Check with `curl -I` for `/`, `/zh/`, `/docs/spdl/`,
-   `/zh/docs/`, `/BingSiteAuth.xml`, `/llms.txt`, `/sitemap.xml` and a missing
-   path.
+   fallback 301. Check with `curl -I` for `/`, `/zh/`, `/ja/`, `/ko/`, `/es/`,
+   `/docs/spdl/`, `/zh/docs/`, `/BingSiteAuth.xml`, `/llms.txt`, `/sitemap.xml`
+   and a missing path.
 4. Re-enable proxying if it is used, then recheck the certificate and the
    301/200 matrix.
 5. Submit the `speedle.io` sitemap to Google and Bing; keep the Engine property.
@@ -111,10 +121,11 @@ settings are changed separately.
 
 Site changes at launch:
 
-- Remove `is-preview` from both language pages to hide the preview ribbon.
+- Remove `is-preview` from every language page to hide the preview ribbon.
 - Replace the noindex meta with `index, follow` and replace `robots.txt` with
   the launch version.
-- Uncomment the canonical, hreflang, `og:url` and JSON-LD block in both pages.
+- Uncomment the canonical, hreflang, `og:url` and JSON-LD block in every
+  language page.
 - Add `sitemap.xml`, `llms.txt` and a 1200 × 630 OG image with the matching
   `og:image` and Twitter image tags.
 - Add the Cloudflare Web Analytics beacon to every public page. Each hostname

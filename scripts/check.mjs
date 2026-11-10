@@ -5,7 +5,30 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const pages = ['index.html', 'zh/index.html', '404.html'];
+const pages = ['index.html', 'zh/index.html', 'ja/index.html', 'ko/index.html', 'es/index.html', '404.html'];
+const languagePages = ['index.html', 'zh/index.html', 'ja/index.html', 'ko/index.html', 'es/index.html'];
+const pageLang = {
+  'index.html': 'en',
+  'zh/index.html': 'zh-CN',
+  'ja/index.html': 'ja',
+  'ko/index.html': 'ko',
+  'es/index.html': 'es',
+  '404.html': 'en',
+};
+const commentedCanonical = {
+  'index.html': 'https://speedle.io/',
+  'zh/index.html': 'https://speedle.io/zh/',
+  'ja/index.html': 'https://speedle.io/ja/',
+  'ko/index.html': 'https://speedle.io/ko/',
+  'es/index.html': 'https://speedle.io/es/',
+};
+const switcher = [
+  ['/', 'en'],
+  ['/zh/', 'zh-CN'],
+  ['/ja/', 'ja'],
+  ['/ko/', 'ko'],
+  ['/es/', 'es'],
+];
 const results = [];
 
 function abs(rel) { return path.join(root, rel); }
@@ -89,6 +112,11 @@ for (const page of pages) {
     assert(!/<meta[^>]+property=["']og:image/i.test(text(page)), 'og:image must not be set yet');
     return 'none';
   });
+  check(`${page}: html lang`, () => {
+    const lang = pageLang[page];
+    assert(new RegExp(`<html lang="${lang}">`).test(text(page)), `expected lang=${lang}`);
+    return lang;
+  });
   check(`${page}: title has no trailing full stop`, () => {
     const match = text(page).match(/<title>([^<]*)<\/title>/i);
     assert(match, '<title> is missing');
@@ -106,23 +134,70 @@ for (const page of pages) {
   });
 }
 
-check('the two language pages switch to each other', () => {
-  assert(/href=["']\/zh\/["']/.test(text('index.html')), 'English page does not link /zh/');
-  assert(/href=["']\/["']/.test(text('zh/index.html')), 'Chinese page does not link /');
-  return 'EN -> /zh/, ZH -> /';
+check('every page links to all five language homes', () => {
+  const missing = [];
+  for (const page of pages) {
+    const html = text(page);
+    for (const [href] of switcher) {
+      const pattern = href === '/' ? /href=["']\/["']/ : new RegExp(`href=["']${href}["']`);
+      if (!pattern.test(html)) missing.push(`${page} -> ${href}`);
+    }
+  }
+  assert(missing.length === 0, missing.join('; '));
+  return 'en, zh-CN, ja, ko, es';
 });
-check('English cross-site links use English URLs', () => {
+check('language pages mark the current language and hreflang', () => {
+  const missing = [];
+  for (const page of languagePages) {
+    const html = text(page);
+    for (const [href, lang] of switcher) {
+      const row = new RegExp(`<a\\b[^>]*href=["']${href === '/' ? '/' : href}["'][^>]*>`, 'g');
+      const tags = [...html.matchAll(row)].map((match) => match[0]);
+      if (!tags.some((tag) => new RegExp(`\\bhreflang=["']${lang}["']`).test(tag))) {
+        missing.push(`${page} hreflang ${lang}`);
+      }
+    }
+    const self = switcher.find(([, lang]) => lang === pageLang[page]);
+    const current = new RegExp(`<a\\b[^>]*href=["']${self[0] === '/' ? '/' : self[0]}["'][^>]*aria-current=["']page["']`);
+    if (!current.test(html)) missing.push(`${page} aria-current`);
+  }
+  assert(missing.length === 0, missing.join('; '));
+  return 'five hreflang rows, current page marked';
+});
+check('commented hreflang lists all five languages and x-default', () => {
+  const required = ['en', 'zh-CN', 'ja', 'ko', 'es', 'x-default'];
+  const missing = [];
+  for (const page of languagePages) {
+    const html = text(page);
+    for (const lang of required) {
+      if (!new RegExp(`<link rel="alternate" hreflang="${lang}"`).test(html)) missing.push(`${page} ${lang}`);
+    }
+    if (!/<link rel="alternate" hreflang="x-default" href="https:\/\/speedle\.io\/">/.test(html)) {
+      missing.push(`${page} x-default`);
+    }
+    const canonical = commentedCanonical[page];
+    if (!html.includes(`<link rel="canonical" href="${canonical}">`)) missing.push(`${page} canonical`);
+    if (!html.includes(`<meta property="og:url" content="${canonical}">`)) missing.push(`${page} og:url`);
+  }
+  assert(missing.length === 0, missing.join('; '));
+  return 'commented; x-default is English';
+});
+function crossSiteUrls(page) {
+  return [...text(page).matchAll(/href=["'](https:\/\/(?:engine|cloud|ai)\.speedle\.io[^"']*)["']/g)].map((match) => match[1]);
+}
+check('English, Japanese, Korean and Spanish cross-site links use English URLs', () => {
   const bad = [];
-  for (const match of text('index.html').matchAll(/href=["'](https:\/\/(?:engine|cloud|ai)\.speedle\.io[^"']*)["']/g)) {
-    if (/\/(?:zh|zh-CN)(?:\/|$)/.test(match[1])) bad.push(match[1]);
+  for (const page of ['index.html', 'ja/index.html', 'ko/index.html', 'es/index.html']) {
+    for (const url of crossSiteUrls(page)) {
+      if (/\/(?:zh-CN|zh|ja|ko|es)(?:\/|#|$)/.test(url)) bad.push(`${page}: ${url}`);
+    }
   }
   assert(bad.length === 0, bad.join(', '));
   return 'Engine, Cloud and AI links stay in English';
 });
 check('Chinese cross-site links use Chinese URLs', () => {
   const bad = [];
-  for (const match of text('zh/index.html').matchAll(/href=["'](https:\/\/[^"']+)["']/g)) {
-    const url = match[1];
+  for (const url of crossSiteUrls('zh/index.html')) {
     if (/^https:\/\/engine\.speedle\.io\//.test(url) && !/^https:\/\/engine\.speedle\.io\/zh\//.test(url)) bad.push(url);
     if (/^https:\/\/cloud\.speedle\.io\//.test(url) && !/^https:\/\/cloud\.speedle\.io\/zh-CN\//.test(url)) bad.push(url);
     if (/^https:\/\/ai\.speedle\.io\//.test(url) && !/^https:\/\/ai\.speedle\.io\/zh\//.test(url)) bad.push(url);
@@ -215,26 +290,102 @@ check('stylesheets and scripts load no external resources', () => {
   return 'none';
 });
 
-/* English and Chinese pages carry the same sections */
-check('EN and ZH have the same sections', () => {
-  const sections = (page) => [...text(page).matchAll(/<section\b[^>]*\bid=["']([^"']+)["']/gi)].map((m) => m[1]).sort();
-  const en = sections('index.html');
-  const zh = sections('zh/index.html');
+/* Every language page carries the same sections, headings and code samples */
+function sectionIds(page) {
+  return [...text(page).matchAll(/<section\b[^>]*\bid=["']([^"']+)["']/gi)].map((match) => match[1]);
+}
+check('language pages have the same sections', () => {
+  const en = [...sectionIds('index.html')].sort();
   assert(en.length > 0, 'no sections found in index.html');
-  assert(JSON.stringify(en) === JSON.stringify(zh), `EN [${en.join(', ')}] != ZH [${zh.join(', ')}]`);
+  const mismatches = [];
+  for (const page of languagePages) {
+    const ids = [...sectionIds(page)].sort();
+    if (JSON.stringify(ids) !== JSON.stringify(en)) mismatches.push(`${page} [${ids.join(', ')}]`);
+  }
+  assert(mismatches.length === 0, mismatches.join('; '));
   return en.join(', ');
 });
-check('EN and ZH have matching heading counts', () => {
-  const counts = (page) => [2, 3].map((level) => (text(page).match(new RegExp(`<h${level}\\b`, 'gi')) || []).length);
+check('language pages have matching heading counts', () => {
+  const counts = (page) => [1, 2, 3].map((level) => (text(page).match(new RegExp(`<h${level}\\b`, 'gi')) || []).length);
   const en = counts('index.html');
-  const zh = counts('zh/index.html');
-  assert(JSON.stringify(en) === JSON.stringify(zh), `EN h2/h3 ${en} != ZH h2/h3 ${zh}`);
-  return `h2 ${en[0]}, h3 ${en[1]}`;
+  const mismatches = [];
+  for (const page of languagePages) {
+    const value = counts(page);
+    if (JSON.stringify(value) !== JSON.stringify(en)) mismatches.push(`${page} h1/h2/h3 ${value}`);
+  }
+  assert(mismatches.length === 0, mismatches.join('; '));
+  return `h1 ${en[0]}, h2 ${en[1]}, h3 ${en[2]}`;
 });
-check('EN and ZH use the same section order', () => {
-  const sections = (page) => [...text(page).matchAll(/<section\b[^>]*\bid=["']([^"']+)["']/gi)].map((m) => m[1]);
-  assert(JSON.stringify(sections('index.html')) === JSON.stringify(sections('zh/index.html')), 'section order differs');
-  return sections('index.html').join(' -> ');
+check('language pages use the same section order', () => {
+  const en = sectionIds('index.html');
+  const mismatches = [];
+  for (const page of languagePages) {
+    const ids = sectionIds(page);
+    if (JSON.stringify(ids) !== JSON.stringify(en)) mismatches.push(`${page} ${ids.join(' -> ')}`);
+  }
+  assert(mismatches.length === 0, mismatches.join('; '));
+  return en.join(' -> ');
+});
+check('language pages keep the same code samples', () => {
+  const blocks = (page) => [...text(page).matchAll(/<pre\b[^>]*>\s*<code>([\s\S]*?)<\/code>\s*<\/pre>/gi)].map((match) => match[1]);
+  const en = blocks('index.html');
+  assert(en.length > 0, 'no code samples in index.html');
+  const mismatches = [];
+  for (const page of languagePages) {
+    const value = blocks(page);
+    if (JSON.stringify(value) !== JSON.stringify(en)) mismatches.push(page);
+  }
+  assert(mismatches.length === 0, `code samples differ: ${mismatches.join(', ')}`);
+  return `${en.length} sample(s)`;
+});
+
+function stripTags(value) {
+  return value.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/\s+/g, ' ').trim();
+}
+function elementInner(html, openEnd, tag) {
+  const re = new RegExp(`<(/?)${tag}\\b[^>]*>`, 'gi');
+  re.lastIndex = openEnd;
+  let depth = 1;
+  let match;
+  while ((match = re.exec(html))) {
+    depth += match[1] ? -1 : 1;
+    if (depth === 0) return html.slice(openEnd, match.index);
+  }
+  return '';
+}
+function labelValues(html) {
+  const values = [];
+  const title = html.match(/<title>([^<]*)<\/title>/i);
+  if (title) values.push(['title', title[1].trim()]);
+  for (const name of ['og:title', 'twitter:title']) {
+    const attr = name.startsWith('og:') ? 'property' : 'name';
+    for (const match of html.matchAll(new RegExp(`<meta\\b[^>]*\\b${attr}=["']${name}["'][^>]*>`, 'gi'))) {
+      const content = match[0].match(/\bcontent=["']([^"']*)["']/i);
+      if (content) values.push([name, content[1].trim()]);
+    }
+  }
+  for (const match of html.matchAll(/\baria-label=["']([^"']*)["']/gi)) values.push(['aria-label', match[1].trim()]);
+  for (const match of html.matchAll(/<h([1-3])\b[^>]*>/gi)) {
+    values.push([`h${match[1]}`, stripTags(elementInner(html, match.index + match[0].length, `h${match[1]}`))]);
+  }
+  const classes = ['eyebrow', 'family-kicker', 'family-role', 'family-foot', 'button', 'card-cta', 'card-link', 'text-link', 'languages-button', 'products-button', 'languages-heading', 'products-heading', 'coming-soon', 'card-badge', 'pill', 'product-desc', 'footer-card-description', 'footer-tagline', 'chip', 'language-row'];
+  for (const className of classes) {
+    const re = new RegExp(`<(?<tag>[a-z0-9]+)\\b[^>]*\\bclass=["'][^"']*\\b${className}\\b[^"']*["'][^>]*>`, 'gi');
+    for (const match of html.matchAll(re)) {
+      values.push([className, stripTags(elementInner(html, match.index + match[0].length, match.groups.tag))]);
+    }
+  }
+  return values.filter(([, value]) => value);
+}
+check('titles, headings and navigation labels have no trailing full stop', () => {
+  const bad = [];
+  for (const page of pages) {
+    for (const [kind, value] of labelValues(text(page))) {
+      if (/[.。]$/.test(value)) bad.push(`${page} ${kind}: ${value}`);
+    }
+  }
+  assert(bad.length === 0, bad.join('; '));
+  return 'none';
 });
 
 /* Report */
