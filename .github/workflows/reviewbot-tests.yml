@@ -1,0 +1,30 @@
+name: ReviewBot tests
+
+on:
+  pull_request:
+    paths:
+      - .github/codex/**
+      - .github/workflows/reviewbot.yml
+      - .github/workflows/reviewbot-review.yml
+      - .github/workflows/reviewbot-command.yml
+      - .github/workflows/reviewbot-comment.yml
+      - .github/workflows/reviewbot-inline.yml
+      - .github/workflows/reviewbot-tests.yml
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ReviewBot unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Run Python unit tests
+        run: python3 -I -m unittest discover -s .github/codex/tests
+      - name: Run Node unit tests
+        run: node --test .github/codex/tests/reviewbot_github.test.js
