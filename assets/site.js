@@ -7,6 +7,9 @@ document.querySelectorAll('header.site-header').forEach(function (header) {
   function menuCopy(open) {
     var lang = document.documentElement.lang || 'en';
     if (lang.indexOf('zh') === 0) return open ? '关闭导航' : '打开导航';
+    if (lang.indexOf('ja') === 0) return open ? 'ナビゲーションを閉じる' : 'ナビゲーションを開く';
+    if (lang.indexOf('ko') === 0) return open ? '내비게이션 닫기' : '내비게이션 열기';
+    if (lang.indexOf('es') === 0) return open ? 'Cerrar navegación' : 'Abrir navegación';
     return open ? 'Close navigation' : 'Open navigation';
   }
   function setOpen(open) {
@@ -73,11 +76,57 @@ document.querySelectorAll('header.site-header').forEach(function (header) {
     });
   }
 
+  /* Languages menu: click/Enter/Space toggles; Esc and outside click close; arrows move. */
+  var languages = header.querySelector('.languages');
+  var languagesButton = languages && languages.querySelector('.languages-button');
+  var languageRows = languages ? Array.prototype.slice.call(languages.querySelectorAll('.language-row')) : [];
+  function setLanguages(open, focusButton) {
+    if (!languagesButton) return;
+    languages.classList.toggle('open', open);
+    languagesButton.setAttribute('aria-expanded', String(open));
+    if (!open && focusButton) languagesButton.focus();
+  }
+  if (languagesButton) {
+    languagesButton.addEventListener('click', function () {
+      setLanguages(languagesButton.getAttribute('aria-expanded') !== 'true');
+    });
+    languagesButton.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowDown' && languageRows.length) {
+        event.preventDefault();
+        event.stopPropagation();
+        setLanguages(true);
+        languageRows[0].focus();
+      }
+    });
+    languages.addEventListener('keydown', function (event) {
+      var index = languageRows.indexOf(document.activeElement);
+      if (event.key === 'Escape' && languagesButton.getAttribute('aria-expanded') === 'true') {
+        event.preventDefault();
+        event.stopPropagation();
+        setLanguages(false, true);
+      } else if (index >= 0 && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+        event.preventDefault();
+        var next = (index + (event.key === 'ArrowDown' ? 1 : languageRows.length - 1)) % languageRows.length;
+        languageRows[next].focus();
+      } else if (index >= 0 && (event.key === 'Home' || event.key === 'End')) {
+        event.preventDefault();
+        languageRows[event.key === 'Home' ? 0 : languageRows.length - 1].focus();
+      }
+    });
+    document.addEventListener('click', function (event) {
+      if (!languages.contains(event.target)) setLanguages(false);
+    });
+    languages.addEventListener('focusout', function (event) {
+      if (event.relatedTarget && !languages.contains(event.relatedTarget)) setLanguages(false);
+    });
+  }
+
   var narrow = window.matchMedia('(max-width: 1160px)');
   if (narrow.addEventListener) {
     narrow.addEventListener('change', function () {
       setOpen(false);
       setProducts(false);
+      setLanguages(false);
     });
   }
 

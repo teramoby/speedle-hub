@@ -37,7 +37,15 @@
 html:lang(zh-CN) {
   --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
-html:lang(zh-CN) h1 { word-break: keep-all; overflow-wrap: anywhere; }
+html:lang(ja) {
+  --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+}
+html:lang(ko) {
+  --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+html:lang(zh-CN) h1,
+html:lang(ja) h1,
+html:lang(ko) h1 { word-break: keep-all; overflow-wrap: anywhere; }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 96px; -webkit-text-size-adjust: 100%; }
@@ -68,6 +76,12 @@ header.site-header {
 }
 header.site-header:lang(zh) {
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+header.site-header:lang(ja) {
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+}
+header.site-header:lang(ko) {
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
 .site-header, .site-header * { box-sizing: border-box; font-feature-settings: normal; text-size-adjust: 100%; }
 .site-header .wrap.nav {
@@ -100,7 +114,8 @@ body.is-preview .preview-ribbon { display: inline-flex; }
 .site-header .nav-links a:focus-visible { color: var(--header-accent); }
 .site-header a:focus-visible,
 .site-header .menu:focus-visible,
-.site-header .products-button:focus-visible {
+.site-header .products-button:focus-visible,
+.site-header .languages-button:focus-visible {
   outline: 2px solid var(--header-accent); outline-offset: 4px;
 }
 .site-header .products { position: relative; }
@@ -142,6 +157,36 @@ body.is-preview .preview-ribbon { display: inline-flex; }
   border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1.4;
   vertical-align: 1px; white-space: nowrap;
 }
+.site-header .languages { position: relative; }
+.site-header .languages-button {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 0;
+  color: inherit; background: none; border: 0; font: inherit; white-space: nowrap;
+  appearance: none; cursor: pointer;
+}
+.site-header .languages-button:hover,
+.site-header .languages-button:focus-visible,
+.site-header .languages-button[aria-expanded="true"] { color: var(--header-accent); }
+.site-header .languages-chevron { display: block; flex: 0 0 10px; transition: transform .2s; }
+.site-header .languages-button[aria-expanded="true"] .languages-chevron { transform: rotate(180deg); }
+.site-header .languages-heading { display: none; }
+.site-header .languages-panel {
+  display: none; position: absolute; top: calc(100% + 14px); right: 0; z-index: 30;
+  min-width: 150px; max-width: calc(100vw - 48px); margin: 0; padding: 8px;
+  background: #25134e; border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+}
+.site-header .languages.open .languages-panel { display: block; }
+.site-header .language-row {
+  display: flex; align-items: center; padding: 8px 12px;
+  border-radius: 8px; color: #fff; white-space: nowrap; font-size: 14px; font-weight: 600;
+  text-decoration: none;
+}
+.site-header .nav-links a.language-row:hover,
+.site-header .nav-links a.language-row:focus-visible { color: var(--header-accent); background: rgba(255, 255, 255, .08); }
+.site-header .nav-links a.language-row:focus-visible { outline-offset: 0; }
+.site-header .nav-links a.language-row[aria-current="page"] {
+  color: var(--header-accent);
+}
 .site-header .menu {
   display: none; width: auto; height: auto; min-width: 0; min-height: 0; margin: 0; padding: 2px 6px;
   color: #fff; background: transparent; border: 0; border-radius: 0; box-shadow: none;
@@ -174,6 +219,16 @@ body.is-preview .preview-ribbon { display: inline-flex; }
     box-shadow: none;
   }
   .site-header .product-desc { white-space: normal; }
+  .site-header .languages { width: 100%; }
+  .site-header .languages-button { display: none; }
+  .site-header .languages-heading { display: block; color: rgba(255, 255, 255, .72); }
+  .site-header .languages-panel,
+  .site-header .languages.open .languages-panel {
+    display: flex; flex-direction: column; position: static; width: auto; max-width: none;
+    margin: 8px 0 0 -12px; padding: 0; background: transparent; border: 0; border-radius: 0;
+    box-shadow: none;
+  }
+  .site-header .language-row { padding: 6px 12px; }
 }
 @media (max-width: 700px) {
   .site-header .wrap.nav { width: min(100% - 28px, 1160px); }
